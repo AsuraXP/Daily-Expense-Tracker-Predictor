@@ -1,33 +1,37 @@
 import csv
 print("----------------------------------Daily Expense Tracker & Predictor----------------------------------")
 print("-----------------------------------------------------------------------------------------------------")
-      
 
-dir = {
-    "item":['Cabbage','Book'],
-    "cost":['230','500'],
-    "category":['food','stationary']
-}
+expenses = [
+    {"item": "Cabbage", "cost": 230, "category": "food"},
+    {"item": "Book", "cost": 500, "category": "stationary"}
+]
 
-print(" ".join(f"{k:>15}" for k in dir.keys()))
-for entry in zip(*dir.values()):
-    print(" ".join(f"{str(v):>15}" for v in entry))
+print(" ".join(f"{k:>15}" for k in expenses[0].keys()))
+for entry in expenses:
+    print(" ".join(f"{str(v):>15}" for v in entry.values()))
 
 total = 0
-for i in dir["cost"]:
-    total += int(i)
+for entry in expenses:
+    total += entry["cost"]
 
-print(f"Total money spended",total)
+print("Total money spended", total)
 
-with open("expense.csv","w",newline="") as file:
-    writer = csv.writer(file)
+def mostExpensive():
+    exprice = 0
+    exitem = ""
+    for entry in expenses:
+        if entry["cost"] > exprice:
+            exprice = entry["cost"]
+            exitem = entry["item"]
+    print(f"Most expensive item: {exitem} ({exprice})")
 
-    writer.writerow(dir.keys())
+mostExpensive()
 
-    for i in zip(*dir.values()):
-        writer.writerow(i)
-
-    writer.writerow([])
-    writer.writerow(["Total money spended",total,""])
+with open("expense.csv", "w", newline="") as file:
+    writer = csv.DictWriter(file, fieldnames=["item", "cost", "category"])
+    writer.writeheader()
+    writer.writerows(expenses)
+    writer.writerow({"item": "Total money spended", "cost": total, "category": ""})
 
 print("expense.csv saved successfully")
